@@ -7,63 +7,80 @@ from gensim.models import Word2Vec
 import networkx as nx
 import numpy as np
 from scipy.sparse import identity, diags
+import torch
+import torch.nn.functional as F
+from sklearn.metrics import log_loss, accuracy_score
 
+
+def save_subgraph_in_file(nbr_nodes, source_path='../input_data/edgelist.txt', destination_path='../input_data/small_edgelist.txt'):
+    G = nx.read_edgelist(source_path, delimiter=',', create_using=nx.Graph(), nodetype=int)
+    G = G.subgraph(range(nbr_nodes))
+    nx.write_edgelist(G, path=destination_path, delimiter=',')
+    print(G.number_of_nodes(), 'nodes,', G.number_of_edges(), 'edges Graph extracted from', source_path[source_path.rfind('/')+1:])
+    G = nx.read_edgelist(destination_path, delimiter=',', create_using=nx.Graph(), nodetype=int)
+    print(G.number_of_nodes(), 'nodes,', G.number_of_edges(), 'edges Graph saved in', destination_path[destination_path.rfind('/')+1:])
+    print(max(G.nodes))
+    return
+
+def intersection(lst1, lst2):
+    lst3 = [value for value in lst1 if value in lst2]
+    return lst3
 
 def read_train_val_graph(path='../input_data/edgelist.txt', val_ratio=0.1):
     G = nx.read_edgelist(path, delimiter=',', create_using=nx.Graph(), nodetype=int)
     nodes = list(G.nodes())
-    print('max of nodes=',max(nodes))
     n = G.number_of_nodes()
-    print('number of nodes of G', n)
     m = G.number_of_edges()
     edges = list(G.edges())
 
-    print('Number of nodes of total set:', n)
-    print('Number of edges of total set:', m)
+    print('Number of nodes:', n, 'number of edges:', m,'in All the set')
 
     node_to_idx = dict()
     for i, node in enumerate(nodes):
         node_to_idx[node] = i
 
     val_edges = list()
-    G_train = G
+    G_train = G.copy()
 
     for edge in edges:
-        if random() < val_ratio:
+        if random() < val_ratio and edge[0] < n and edge[1] < n:
             val_edges.append(edge)
+            G_train.remove_edge(edge[0], edge[1]) # We remove the val edges from the graph G
 
-    # We remove the val edges from the graph G
-    for edge in val_edges:
-        G_train.remove_edge(edge[0], edge[1])
+   
+    #for edge in val_edges:
+        
 
     n = G_train.number_of_nodes()
     m = G_train.number_of_edges()
     train_edges = list(G_train.edges())
 
-    print('Number of nodes of training set:', n)
-    print('Number of edges of training set:', m)
-    print('max of nodes of G_train', max(G_train.nodes))
+    print('Number of nodes:', n, 'number of edges:', m, 'in the Training set')
+    print('len(nodes)', len(nodes))
 
     y_val = [1]*len(val_edges)
 
     n_val_edges = len(val_edges)
+    
+    print('Creating random val_edges...')
+    for i in range(n_val_edges):
+        n1 = nodes[randint(0, n-1)]
+        n2 = nodes[randint(0, n-1)]
+        (n1, n2) = (min(n1, n2), max(n1, n2))
+        while n2 >= n: #or (n1, n2) in train_edges:
+            if (n1, n2) in train_edges:
+                print((n1, n2), 'in train_edges:')
+            n1 = nodes[randint(0, n-1)]
+            n2 = nodes[randint(0, n-1)]
+            (n1, n2) = (min(n1, n2), max(n1, n2))
+        val_edges.append((n1, n2))
 
-    # Create random pairs of nodes (testing negative edges)
-#     for i in range(n_val_edges):
-#         n1 = nodes[randint(0, n-1)]
-#         n2 = nodes[randint(0, n-1)]
-#         (n1, n2) = (min(n1, n2), max(n1, n2))
-#         val_edges.append((n1, n2))
-
-    # Remove from val_edges edges that exist in both train and val
-    # for edge in list(set(val_edges) & set(train_edges)):
-    #     val_edges.remove(edge)
-
-    # n_val_edges = len(val_edges) # - len(y_val) #because we removed from val_edges edges that exist in both
     y_val.extend([0]*(n_val_edges))
-    print('Returned G_train, train_edges, val_edges, y_val and nodes objects')
+    
+    print('Returned G_train, train_edges, val_edges, y_val, nodes and node_to_idx objects')
     print('Loaded from', path[path.rfind('/')+1:], 'and with a training validation split ratio =', val_ratio)
-    return G_train, train_edges, val_edges, y_val, nodes
+    
+    return G, G_train, train_edges, val_edges, y_val, nodes, node_to_idx
 
 def random_walk(G, node, walk_length):
     walk = [node]
@@ -122,3 +139,36 @@ def create_and_normalize_adjacency(G):
     indices = np.array(adj.nonzero()) # Gets the positions of non zeros of adj into indices
     print('Created indices', indices.shape, 'with the positions of non zeros in adj matrix')
     return adj, indices
+
+def sparse_mx_to_torch_sparse_tensor(sparse_mx):
+    sparse_mx = sparse_mx.tocoo().astype(np.float32)
+    indices = torch.from_numpy(np.vstack((sparse_mx.row, sparse_mx.col)).astype(np.int64))
+    values = torch.from_numpy(sparse_mx.data)
+    shape = torch.Size(sparse_mx.shape)
+    return torch.sparse.FloatTensor(indices, values, shape)
+
+def train_model(model, optimizer, features, adj, indices, y, epochs):
+    # Train model
+    model.train()
+    start_time = time()
+    for epoch in range(epochs):
+        t = time()
+        optimizer.zero_grad()
+        rand_indices = torch.randint(0, features.size(0), (indices.size(0),indices.size(1)), device=adj.device)# We take random indices each time we run an epoch
+        pairs = torch.cat((indices, rand_indices), dim=1) # Concatenate the edges indices and random indices.   
+        output = model(features, adj, pairs) # we run the model that gives the output.
+        loss_train = F.nll_loss(output, y) # we are using nll_loss as loss to optimize, we store it in loss_train. We compare to y which is stable and contains the tag ones and zeros.
+        acc_train = accuracy_score(torch.argmax(output, dim=1).detach().cpu().numpy(), y.cpu().numpy())# just to show it in the out put message of the training
+        loss_train.backward() # The back propagation ? --> Computes the gradient of current tensor w.r.t. graph leaves
+        optimizer.step() # Performs a single optimization step (parameter update).
+
+        if epoch % 5 == 0:
+            print('Epoch: {:03d}'.format(epoch+1),
+                  'loss_train: {:.4f}'.format(loss_train.item()),
+                  'acc_train: {:.4f}'.format(acc_train.item()),
+                  'time: {:.4f} s'.format(time() - t),
+                 'total_time: {} min'.format(round((time() - start_time)/60)))
+
+    print("Optimization Finished in {} min!".format(round((time() - start_time)/60)))
+    return model
+    

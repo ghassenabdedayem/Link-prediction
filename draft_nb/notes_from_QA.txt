@@ -1,0 +1,51 @@
+****First session with Giannis:
+
+CNN with Sigmoid to predict if they connected based on the abstract.
+
+A good way to aggregate the text is to calculate the average (mean)
+
+Another approach is to use directly a GNN. Take the abstract, compute the embeddng of the words. Take the mean of the node. Then you can take the features.
+
+For thr GN, we have only the
+
+pairs is a tensor, contains a pair of nodes that contains all the positive samples and some of the negative samples. y: half of them are equal to one, and half of them are connected. rand_indices are random pairs that are considered as not connected.
+
+As we have a non directed. We can take twice every edge (2m instead of 2m for y. Or we can take the edges only once.
+
+One vector for the abstract using the word2vec embedding or any other similar approach.
+
+Or we can directly use a CNN.We can take a CNN and feed pais of abstracts in the CNN, the CNN will produce one vector for the first abstract and one vector for the second. We can combine these two vectors.
+
+Then we can use an MLP to produce a vector, and then we can concatenate the two vectors from CNN and MLP.
+
+There is a pretrained word embedding (Google provided a pretrained embedding).
+
+Embedding of each word. Then the CNN will provide one vector for the abstract.
+
+Each abstract has a different number of words. the representation of the CNN will have a fixed size of the embedding vector.
+
+
+
+****Second session with Giannis
+
+To learn some low dimension of the authors and then concatenate them to the features with word2vec. features of pairs of nodes. treat them and then concatenate.
+
+NLP: directly the CNN and classify the nodes and train the model to predict if they are connected. And then combine with the GNN. From this model, once it's trained, we can use the embedded representation. Or combine the results.
+
+The second thing to do: in a single model CNN to produce some embedding of the abstract. Annotate based on the features. If you plan to do, he can take a
+
+It takes a pair of abstract and then predict if they site each other.
+
+Keep seperated abstracts. Element wide multiplication product or the difference of the two vectors. Multiplication of elements of vectors. Or sum or the absolute difference of the vectors. Once we have this vector, we apply a fc to predict the result.
+
+We can give the model the same abstract twice and it will give the same vector twice.
+
+We can use the word embedding of Google to have a matrix of the abstract. We need to use the embedding of the words and Or we can use a random embdedding of the words to have an intial embedding. And then we can fine tune the embedding during the training.
+
+To take the last
+
+
+
+****Idea from Amin
+
+Get red of the authors that occured below a certain threshold and keep authors occuring a minimum number of times
