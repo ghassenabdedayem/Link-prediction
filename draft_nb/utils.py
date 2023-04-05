@@ -10,6 +10,19 @@ from scipy.sparse import identity, diags
 import torch
 import torch.nn.functional as F
 from sklearn.metrics import log_loss, accuracy_score
+from unidecode import unidecode
+import pandas as pd
+
+device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+
+
+def text_to_list(text):
+    return unidecode(text).split(',')
+
+def intersection(lst1, lst2): # a function that returns the number of common items of two lists and 1 or 0 if there are common. This function will be used in add_authors_to_pairs to add this features to the pairs.
+    lst3 = [value for value in lst1 if value in lst2]
+    is_common = 1 if len(lst3)>0 else 0
+    return len(lst3), is_common
 
 
 def save_subgraph_in_file(nbr_nodes, source_path='../input_data/edgelist.txt', destination_path='../input_data/small_edgelist.txt'):
@@ -22,9 +35,8 @@ def save_subgraph_in_file(nbr_nodes, source_path='../input_data/edgelist.txt', d
     print(max(G.nodes))
     return
 
-def intersection(lst1, lst2):
-    lst3 = [value for value in lst1 if value in lst2]
-    return lst3
+
+
 
 def read_train_val_graph(path='../input_data/edgelist.txt', val_ratio=0.1):
     G = nx.read_edgelist(path, delimiter=',', create_using=nx.Graph(), nodetype=int)
@@ -33,7 +45,7 @@ def read_train_val_graph(path='../input_data/edgelist.txt', val_ratio=0.1):
     m = G.number_of_edges()
     edges = list(G.edges())
 
-    print('Number of nodes:', n, 'number of edges:', m,'in All the set')
+    print('Number of nodes:', n, 'number of edges:', m,'in the Complete the set')
 
     node_to_idx = dict()
     for i, node in enumerate(nodes):
@@ -77,10 +89,18 @@ def read_train_val_graph(path='../input_data/edgelist.txt', val_ratio=0.1):
 
     y_val.extend([0]*(n_val_edges))
     
+    ### From Giannis
+    val_indices = np.zeros((2,len(val_edges)))
+    for i,edge in enumerate(val_edges):
+        val_indices[0,i] = node_to_idx[edge[0]]
+        val_indices[1,i] = node_to_idx[edge[1]]
+    
     print('Returned G_train, train_edges, val_edges, y_val, nodes and node_to_idx objects')
     print('Loaded from', path[path.rfind('/')+1:], 'and with a training validation split ratio =', val_ratio)
     
-    return G, G_train, train_edges, val_edges, y_val, nodes, node_to_idx
+    
+    
+    return G, G_train, train_edges, val_edges, val_indices, y_val, nodes, node_to_idx
 
 def random_walk(G, node, walk_length):
     walk = [node]
@@ -90,7 +110,7 @@ def random_walk(G, node, walk_length):
         if len(neibor_nodes) > 0:
             next_node = choice(neibor_nodes)
             walk.append(next_node)
-    walk = [str(node) for node in walk] # in case the nodes are in string format, we don't need to cast into string, but if the nodes are in numeric or integer, we need this line to cast into string
+    walk = [node for node in walk] # in case the nodes are in string format, we don't need to cast into string, but if the nodes are in numeric or integer, we need this line to cast into string
     return walk
 
 
@@ -107,7 +127,6 @@ def generate_walks(G, num_walks, walk_length):
     print('Random walks generated in in {}s!'.format(round(time()-t)))
     return walks
 
-
 def apply_word2vec_on_features(features, nodes, vector_size=128, window=5, min_count=0, sg=1, workers=8):
     t = time()
     print('Start applying Word2Vec...')
@@ -117,11 +136,13 @@ def apply_word2vec_on_features(features, nodes, vector_size=128, window=5, min_c
     print('Word2vec model trained on features in {} min!'.format(round((time()-t)/60)))
     features_np = []
     for node in nodes:
-        features_np.append(wv_model.wv[str(node)])
+        features_np.append(wv_model.wv[node])
 
     features_np = np.array(features_np)
     print(features_np.shape, 'features numpy array created in {} min!'.format(round((time()-t)/60)))
     return features_np
+
+
 
 def normalize_adjacency(A):
     n = A.shape[0]
@@ -146,29 +167,19 @@ def sparse_mx_to_torch_sparse_tensor(sparse_mx):
     values = torch.from_numpy(sparse_mx.data)
     shape = torch.Size(sparse_mx.shape)
     return torch.sparse.FloatTensor(indices, values, shape)
+ 
 
-def train_model(model, optimizer, features, adj, indices, y, epochs):
-    # Train model
-    model.train()
-    start_time = time()
-    for epoch in range(epochs):
-        t = time()
-        optimizer.zero_grad()
-        rand_indices = torch.randint(0, features.size(0), (indices.size(0),indices.size(1)), device=adj.device)# We take random indices each time we run an epoch
-        pairs = torch.cat((indices, rand_indices), dim=1) # Concatenate the edges indices and random indices.   
-        output = model(features, adj, pairs) # we run the model that gives the output.
-        loss_train = F.nll_loss(output, y) # we are using nll_loss as loss to optimize, we store it in loss_train. We compare to y which is stable and contains the tag ones and zeros.
-        acc_train = accuracy_score(torch.argmax(output, dim=1).detach().cpu().numpy(), y.cpu().numpy())# just to show it in the out put message of the training
-        loss_train.backward() # The back propagation ? --> Computes the gradient of current tensor w.r.t. graph leaves
-        optimizer.step() # Performs a single optimization step (parameter update).
+def add_authors_to_pairs (pairs, authors):
+    authors = pd.DataFrame(authors)
 
-        if epoch % 5 == 0:
-            print('Epoch: {:03d}'.format(epoch+1),
-                  'loss_train: {:.4f}'.format(loss_train.item()),
-                  'acc_train: {:.4f}'.format(acc_train.item()),
-                  'time: {:.4f} s'.format(time() - t),
-                 'total_time: {} min'.format(round((time() - start_time)/60)))
+    pairs_df = pd.DataFrame(np.transpose(pairs)).rename(columns={0: "paper_1", 1: "paper_2"})
+    pairs_df = pairs_df.merge(authors, left_on='paper_1', right_on='paper_id', how='left').rename(columns={'authors': "authors_1"})
+    pairs_df = pairs_df.merge(authors, left_on='paper_2', right_on='paper_id', how='left').rename(columns={'authors': "authors_2"})
+    pairs_df.drop(['paper_id_x', 'paper_id_y'], axis=1, inplace=True)
 
-    print("Optimization Finished in {} min!".format(round((time() - start_time)/60)))
-    return model
+    pairs_df['nb_common_author'] = pairs_df.apply(lambda row: intersection(row['authors_1'], row['authors_2'])[0], axis=1)
+    pairs_df['is_common_author'] = pairs_df.apply(lambda row: intersection(row['authors_1'], row['authors_2'])[1], axis=1)
+
+    pairs_tensor = torch.LongTensor(np.transpose(pairs_df[["paper_1", "paper_2", 'is_common_author', 'nb_common_author']].values.tolist()))
     
+    return pairs_tensor
