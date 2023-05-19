@@ -1,2 +1,2 @@
-# data_challenge_2022
+# Link prediction in Graph
  
