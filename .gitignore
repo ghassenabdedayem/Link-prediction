@@ -134,3 +134,9 @@ dmypy.json
 *.bin
 *.zip
 *.csv
+*.plk
+*.npz
+*.gz
+*.npy
+*.pt
+*.pkl
