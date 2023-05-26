@@ -5,9 +5,11 @@
  
  ## Data specificities
  Size of the graph: 
- \n Number of nodes = 138,499
+ Number of nodes = 138,499
  Number of the edges = 1,091,955
 
-
+cqsdcjdqsc.
+scj.
+<gj.
 
 
