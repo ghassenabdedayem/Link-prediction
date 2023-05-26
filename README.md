@@ -10,7 +10,7 @@
  
  Number of the edges = 1,091,955
 
-<img width="367" alt="image" src="https://github.com/ghassenabdedayem/Link-prediction/assets/56557440/0fef38c6-6bd4-40ea-82b1-d59bcf5a1b52">
+<img width="500" alt="image" src="https://github.com/ghassenabdedayem/Link-prediction/assets/56557440/0fef38c6-6bd4-40ea-82b1-d59bcf5a1b52">
 
 
 
