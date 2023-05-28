@@ -55,12 +55,23 @@ The lists of authors by paper are transformed into a one hot vector sparse repre
 ### Abstracts text
 Many techniques have been applied to get abstracts embeddings. These resulted embeddings are then texted as input in the implemeted model.
 #### TF-IDF:
+**I prepared a new feature by concatenating the authors to the cleaned abstracts of the papers. Then, I created the logarithmic TF-IDF matrix and applied the dimensionality reduction using the TruncatedSVD function to reduce it to 768 dimensions.**
+
 #### Word2vec:
 #### Goog300 word2vec:
 #### BART:
 #### BERT:
+We used the pretrained BERT model ‘bert-base-nli-mean-tokens’ which is more suitable for text similarity. The model 'bert-base-nli-mean-tokens' refers to a specific variant of the BERT (Bidirectional Encoder Representations from Transformers) model that has been fine-tuned for natural language inference (NLI) tasks. This variant is trained to generate sentence-level embeddings by taking the mean of the token embeddings produced by the BERT model. The specificity of 'bert-base-nli-mean-tokens' lies in its ability to capture the contextual information of sentences and generate fixed-length vector representations (embeddings) that encode the meaning of the entire sentence.
 
 ## Model
+<img width="454" alt="image" src="https://github.com/ghassenabdedayem/Link-prediction/assets/56557440/a80766fa-a085-4982-90b1-d8b989899ae2">
+Figure 10: architecture with sparse authors, abstract features and random walks![image](https://github.com/ghassenabdedayem/Link-prediction/assets/56557440/1c90fa03-782a-4806-a3ef-da5b72097c86)
+
+<img width="454" alt="image" src="https://github.com/ghassenabdedayem/Link-prediction/assets/56557440/00515438-4b51-4369-85ad-b0c6b2d471c7">
+Figure 11: architecture with TF-IDF with authors and walks features![image](https://github.com/ghassenabdedayem/Link-prediction/assets/56557440/1008f213-b8e9-4d6f-babf-5789872c8da4)
+
+<img width="252" alt="image" src="https://github.com/ghassenabdedayem/Link-prediction/assets/56557440/af426332-899a-4b19-a782-3e104d6a9775">
+Figure 9: log loss over epoch![image](https://github.com/ghassenabdedayem/Link-prediction/assets/56557440/0530a723-7034-458e-8400-d5eeca309c31)
 
 
 
