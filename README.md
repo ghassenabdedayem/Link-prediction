@@ -18,7 +18,7 @@ Figure 1: 1,000 first nodes of the graph
 Figure 2: 1,000 second nodes of the graph
 
 ### Abstracts
-#### Before normalization
+#### Before normalization:
 Characteristics of the abstracts before normalization:
 - Longest abstract: 1,462 words
 - Number of words: 345,570 words
@@ -26,7 +26,7 @@ Characteristics of the abstracts before normalization:
 - Long abstracts more than 128 words: 82,394
 - Very long abstracts more than 256 words: 4,171
 - Huge abstracts more than 512 words: 65
-#### After text normalization
+#### After normalization:
 We normalized the text by removing special characters and applying Lemmatization using the WordNet lemmatizer three times with different part-of-speech tags: the first time as a noun,
 the second as an adjective, the third as a verb. The output of the text cleaning of the abstracts has the below characteristics:
 - Longest sentence = 915 words
@@ -53,7 +53,14 @@ Creating random walks features allows us to capture more nuanced relationships b
 ### Authors features
 The lists of authors by paper are transformed into a one hot vector sparse representation. And assuming that only authors occusing on at least two papers have effect on the link prediction problem, we got rid of authors occuring only once. This sparse representation is then densified using TruncatedSVD.
 ### Abstracts text
+Many techniques have been applied to get abstracts embeddings. These resulted embeddings are then texted as input in the implemeted model.
+#### TF-IDF:
+#### Word2vec:
+#### Goog300 word2vec:
+#### BART:
+#### BERT:
 
+## Model
 
 
 
