@@ -18,7 +18,7 @@ Figure 1: 1,000 first nodes of the graph
 Figure 2: 1,000 second nodes of the graph
 
 ### Abstracts
-class: vocab
+#### Before normalization
 Characteristics of the abstracts before normalization:
 - Longest abstract: 1,462 words
 - Number of words: 345,570 words
@@ -26,14 +26,18 @@ Characteristics of the abstracts before normalization:
 - Long abstracts more than 128 words: 82,394
 - Very long abstracts more than 256 words: 4,171
 - Huge abstracts more than 512 words: 65
-After text normalization:
+#### After text normalization
+We normalized the text by removing special characters and applying Lemmatization using the WordNet lemmatizer three times with different part-of-speech tags: the first time as a noun,
+the second as an adjective, the third as a verb. The output of the text cleaning of the abstracts has the below characteristics:
+- Longest sentence = 915 words
+- Number of words = 188,891 words
 - Empty abstracts = 7249
 - Long abstracts more than 128 words = 11,217
 - Very long abstracts more than 256 words = 95
 - Huge abstracts more than 512 words = 12
 
 ### Authors
-function: text_to_list
+Authors are cleaned by removing spacial characters and removing accents from letters with accents (using unicode function) and saving them as a list of cleaned authors for each paper.
 
 <img width="400" alt="image" src="https://github.com/ghassenabdedayem/Link-prediction/assets/56557440/95721e9a-a5e3-4bbb-aaf2-bfbd01058550">
 
@@ -47,11 +51,11 @@ Then create and normalize an adjacency matrix from the graph using the functions
 ### Random walks features
 Creating random walks features allows us to capture more nuanced relationships between nodes in the graph, as the random walks provide a way to sample different paths and capture the context in which nodes appear. The dimensionality of the resulting embeddings is reduced using word2vec, allowing us to efficiently incorporate these features into our model. Overall, this technique provides a way to enrich our model with more information about the graph structure, potentially improving its performance.
 ### Authors features
+The lists of authors by paper are transformed into a one hot vector sparse representation. And assuming that only authors occusing on at least two papers have effect on the link prediction problem, we got rid of authors occuring only once. This sparse representation is then densified using TruncatedSVD.
+### Abstracts text
 
 
 
-- Longest sentence = 915 words
-- Number of words = 188,891 words
 
 
 
