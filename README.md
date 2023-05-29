@@ -27,11 +27,11 @@ Characteristics of the abstracts before normalization:
 - Very long abstracts more than 256 words: 4,171
 - Huge abstracts more than 512 words: 65
 #### After normalization:
-We normalized the text by removing special characters and applying Lemmatization using the WordNet lemmatizer three times with different part-of-speech tags: the first time as a noun,
-the second as an adjective, the third as a verb. The output of the text cleaning of the abstracts has the below characteristics:
+We normalized the text by removing special characters and stop words and by applying Lemmatization using the WordNet lemmatizer (three times with different part-of-speech tags: the first time as a noun,
+the second as an adjective, the third as a verb). The output of the text cleaning of the abstracts has the below characteristics:
 - Longest sentence = 915 words
 - Number of words = 188,891 words
-- Empty abstracts = 7249
+- Empty abstracts = 7,249
 - Long abstracts more than 128 words = 11,217
 - Very long abstracts more than 256 words = 95
 - Huge abstracts more than 512 words = 12
@@ -55,9 +55,12 @@ The lists of authors by paper are transformed into a one hot vector sparse repre
 ### Abstracts text
 Many techniques have been applied to get abstracts embeddings. These resulted embeddings are then texted as input in the implemeted model.
 #### TF-IDF:
-*I prepared a new feature by concatenating the authors to the cleaned abstracts of the papers. Then, I created the logarithmic TF-IDF matrix and applied the dimensionality reduction using the TruncatedSVD function to reduce it to 768 dimensions.*
+From the Python library scikit-learn we used the function TfidfVectorizer to generate the tf-idf matrix with normalization and log frequency. Normalization ensures that the values in the matrix are scaled between 0 and 1, while log frequency scales down the importance of high-frequency words. This approach results in a sparse matrix, where each row represents a document and each column represents a term in the corpus vocabulary. Then we applied the dimensionality reduction by using the TruncatedSVD function.
+*Another variant is made by concatenating the authors to the cleaned abstracts of the papers and then creating the logarithmic TF-IDF matrix.*
+*And because our task is a link prediction between abstracts, another variant has been tested by keeping only words that occur in at least two abstracts.*
 
 #### Word2vec:
+
 #### Goog300 word2vec:
 #### BART:
 #### BERT:
