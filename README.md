@@ -4,7 +4,7 @@
  The aim of this project is to apply advanced Deep Learning techniques to solve a link prediction problem. The problem involves analyzing a graph network with over a hundred thousand nodes, representing scientific papers. The edges in the graph represent links between scientific papers, indicating if one paper cites another. In addition to the graph structure, we are given the abstracts and authors of each paper.
  
  <p align="center"><img width="320" alt="image" src="https://github.com/ghassenabdedayem/Link-prediction/assets/56557440/a320bce2-cd87-46c7-89d4-8d9d62e72086"></p>
- <p align="center">Figure 1: link prediction in graph</p><br>
+ <p align="center"><b>Figure 1:</b> link prediction in graph</p><br>
  
  ## Data exploration
  The files are 
@@ -14,10 +14,10 @@
  - Number of the edges: 1,091,955
 
 <p align="center"><img width="400" alt="image" src="https://github.com/ghassenabdedayem/Link-prediction/assets/56557440/0fef38c6-6bd4-40ea-82b1-d59bcf5a1b52"></p>
-<p align="center">Figure 2: 1,000 first nodes of the graph</p><br>
+<p align="center"><b>Figure 2:</b> 1,000 first nodes of the graph</p><br>
  
 <p align="center"><img width="400" alt="image" src="https://github.com/ghassenabdedayem/Link-prediction/assets/56557440/2da14f09-c1c4-4ee5-8abd-495c3239d4e2"></p>
-<p align="center">Figure 3: 1,000 second nodes of the graph</p><br>
+<p align="center"><b>Figure 3:</b> 1,000 second nodes of the graph</p><br>
 
 
 ### Abstracts
@@ -43,7 +43,7 @@ the second as an adjective, the third as a verb). The output of the text cleanin
 Authors are cleaned by removing spacial characters and removing accents from letters with accents (using unicode function) and saving them as a list of cleaned authors for each paper.
 
 <p align="center"><img width="400" alt="image" src="https://github.com/ghassenabdedayem/Link-prediction/assets/56557440/95721e9a-a5e3-4bbb-aaf2-bfbd01058550"></p>
-<p align="center">Figure 4: extract from the cleaned authors dataset</p><br>
+<p align="center"><b>Figure 4:</b> extract from the cleaned authors dataset</p><br>
 
 ## Features engineering
 In this section we will explain the features engineering from the Graph, the Authors and the Abstracts. These precalculated features are then stored on Google Cloud Platform (GCP) and used directly by the model of next section.
@@ -68,7 +68,7 @@ From the Python library scikit-learn we used the function TfidfVectorizer to gen
 #### Word2vec:
 A local word2vec model is trained on the vocabulary of the abstracts to ensure that each word had its embedded representation. Then I applied mean pooling across the word embeddings of the abstracts to obtain a single representation for each abstract. The size of the output vector of this approach was set to 300.
 <p align="center"><img width="700" alt="image" src="https://github.com/ghassenabdedayem/Link-prediction/assets/56557440/9a37152b-faf6-4336-9baf-e50d7c3cc252"></p>
-<p align="center">Figure: word2vec traning and abstracts encoding</p><br>
+<p align="center"><b>Figure 5:</b> word2vec traning and abstracts encoding</p><br>
 
 #### Goog300 word2vec:
 The pre-trained Google News 300-dimensional word2vec model (goog300) was used to obtain words embeddings. Each word in the abstracts' vocabulary is checked against the vocabulary of the pre-trained model, and the corresponding word embeddings for those found are retreived. For those not found, they are just omitted. Then, averaging the word embeddings for all words in each abstract allowed us to obtain a single vector representation that captured its semantic meaning.
@@ -80,15 +80,15 @@ We used the pretrained BERT model ‘bert-base-nli-mean-tokens’ which is more 
 
 ## Model
 <p align="center"><img width="900" alt="image" src="https://github.com/ghassenabdedayem/Link-prediction/assets/56557440/a80766fa-a085-4982-90b1-d8b989899ae2"></p>
-<p align="center">Figure: architecture with sparse authors, abstract features and random walks
+<p align="center"><b>Figure 6:</b> architecture with sparse authors, abstract features and random walks</p><br>
 
  
 <p align="center"><img width="900" alt="image" src="https://github.com/ghassenabdedayem/Link-prediction/assets/56557440/00515438-4b51-4369-85ad-b0c6b2d471c7"></p>
-<p align="center">Figure: architecture with TF-IDF with authors and walks features
+<p align="center"><b>Figure 7:</b> architecture with TF-IDF with authors and walks features</p><br>
  
 
 <p align="center"><img width="500" alt="image" src="https://github.com/ghassenabdedayem/Link-prediction/assets/56557440/af426332-899a-4b19-a782-3e104d6a9775"></p>
-<p align="center">Figure: log loss over epoch
+<p align="center"><b>Figure 8:</b> log loss over epoch</p><br>
 
 
 
