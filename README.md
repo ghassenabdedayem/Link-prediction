@@ -3,19 +3,22 @@
  ## Introduction
  The aim of this project is to apply advanced Deep Learning techniques to solve a link prediction problem. The problem involves analyzing a graph network with over a hundred thousand nodes, representing scientific papers. The edges in the graph represent links between scientific papers, indicating if one paper cites another. In addition to the graph structure, we are given the abstracts and authors of each paper.
  
+ <p align="center"><img width="320" alt="image" src="https://github.com/ghassenabdedayem/Link-prediction/assets/56557440/a320bce2-cd87-46c7-89d4-8d9d62e72086"></p>
+ 
  ## Data exploration
  The files are 
  ### Graph
+ The size of the graph and its characteristics are:
  - Number of nodes: 138,499
  - Number of the edges: 1,091,955
 
-<img width="450" alt="image" src="https://github.com/ghassenabdedayem/Link-prediction/assets/56557440/0fef38c6-6bd4-40ea-82b1-d59bcf5a1b52">
+<p align="center"><img width="400" alt="image" src="https://github.com/ghassenabdedayem/Link-prediction/assets/56557440/0fef38c6-6bd4-40ea-82b1-d59bcf5a1b52"></p>
 
-Figure 1: 1,000 first nodes of the graph
+<p align="center">Figure 1: 1,000 first nodes of the graph</p>
 
-<img width="450" alt="image" src="https://github.com/ghassenabdedayem/Link-prediction/assets/56557440/2da14f09-c1c4-4ee5-8abd-495c3239d4e2">
+<p align="center"><img width="400" alt="image" src="https://github.com/ghassenabdedayem/Link-prediction/assets/56557440/2da14f09-c1c4-4ee5-8abd-495c3239d4e2"></p>
+<p align="center">Figure 2: 1,000 second nodes of the graph</p>
 
-Figure 2: 1,000 second nodes of the graph
 
 ### Abstracts
 #### Before normalization:
@@ -39,7 +42,7 @@ the second as an adjective, the third as a verb). The output of the text cleanin
 ### Authors
 Authors are cleaned by removing spacial characters and removing accents from letters with accents (using unicode function) and saving them as a list of cleaned authors for each paper.
 
-<img width="400" alt="image" src="https://github.com/ghassenabdedayem/Link-prediction/assets/56557440/95721e9a-a5e3-4bbb-aaf2-bfbd01058550">
+<p align="center"><img width="400" alt="image" src="https://github.com/ghassenabdedayem/Link-prediction/assets/56557440/95721e9a-a5e3-4bbb-aaf2-bfbd01058550"></p>
 
 
 ## Features engineering
@@ -56,12 +59,17 @@ The lists of authors by paper are transformed into a one hot vector sparse repre
 Many techniques have been applied to get abstracts embeddings. These resulted embeddings are then texted as input in the implemeted model.
 #### TF-IDF:
 From the Python library scikit-learn we used the function TfidfVectorizer to generate the tf-idf matrix with normalization and log frequency. Normalization ensures that the values in the matrix are scaled between 0 and 1, while log frequency scales down the importance of high-frequency words. This approach results in a sparse matrix, where each row represents a document and each column represents a term in the corpus vocabulary. Then we applied the dimensionality reduction by using the TruncatedSVD function.
+
 *Another variant is made by concatenating the authors to the cleaned abstracts of the papers and then creating the logarithmic TF-IDF matrix.*
+
 *And because our task is a link prediction between abstracts, another variant has been tested by keeping only words that occur in at least two abstracts.*
 
 #### Word2vec:
+A local word2vec model is trained on the vocabulary of the abstracts to ensure that each word had its embedded representation. Then I applied mean pooling across the word embeddings of the abstracts to obtain a single representation for each abstract. The size of the output vector of this approach was set to 300.
+<p align="center"><img width="900" alt="image" src="https://github.com/ghassenabdedayem/Link-prediction/assets/56557440/9a37152b-faf6-4336-9baf-e50d7c3cc252"></p>
 
 #### Goog300 word2vec:
+
 #### BART:
 #### BERT:
 We used the pretrained BERT model ‘bert-base-nli-mean-tokens’ which is more suitable for text similarity. The model 'bert-base-nli-mean-tokens' refers to a specific variant of the BERT (Bidirectional Encoder Representations from Transformers) model that has been fine-tuned for natural language inference (NLI) tasks. This variant is trained to generate sentence-level embeddings by taking the mean of the token embeddings produced by the BERT model. The specificity of 'bert-base-nli-mean-tokens' lies in its ability to capture the contextual information of sentences and generate fixed-length vector representations (embeddings) that encode the meaning of the entire sentence.
