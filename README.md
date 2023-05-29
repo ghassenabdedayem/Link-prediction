@@ -66,26 +66,28 @@ From the Python library scikit-learn we used the function TfidfVectorizer to gen
 
 #### Word2vec:
 A local word2vec model is trained on the vocabulary of the abstracts to ensure that each word had its embedded representation. Then I applied mean pooling across the word embeddings of the abstracts to obtain a single representation for each abstract. The size of the output vector of this approach was set to 300.
-<p align="center"><img width="900" alt="image" src="https://github.com/ghassenabdedayem/Link-prediction/assets/56557440/9a37152b-faf6-4336-9baf-e50d7c3cc252"></p>
+<p align="center"><img width="700" alt="image" src="https://github.com/ghassenabdedayem/Link-prediction/assets/56557440/9a37152b-faf6-4336-9baf-e50d7c3cc252"></p>
 
 #### Goog300 word2vec:
+The pre-trained Google News 300-dimensional word2vec model (goog300) was used to obtain words embeddings. Each word in the abstracts' vocabulary is checked against the vocabulary of the pre-trained model, and the corresponding word embeddings for those found are retreived. For those not found, they are just omitted. Then, averaging the word embeddings for all words in each abstract allowed us to obtain a single vector representation that captured its semantic meaning.
+*NB. I did not replace the unfound words by random representations because of the calculation time.* 
 
 #### BART:
 #### BERT:
 We used the pretrained BERT model ‘bert-base-nli-mean-tokens’ which is more suitable for text similarity. The model 'bert-base-nli-mean-tokens' refers to a specific variant of the BERT (Bidirectional Encoder Representations from Transformers) model that has been fine-tuned for natural language inference (NLI) tasks. This variant is trained to generate sentence-level embeddings by taking the mean of the token embeddings produced by the BERT model. The specificity of 'bert-base-nli-mean-tokens' lies in its ability to capture the contextual information of sentences and generate fixed-length vector representations (embeddings) that encode the meaning of the entire sentence.
 
 ## Model
-<img width="900" alt="image" src="https://github.com/ghassenabdedayem/Link-prediction/assets/56557440/a80766fa-a085-4982-90b1-d8b989899ae2">
+<p align="center"><img width="900" alt="image" src="https://github.com/ghassenabdedayem/Link-prediction/assets/56557440/a80766fa-a085-4982-90b1-d8b989899ae2"></p>
 
-Figure 3: architecture with sparse authors, abstract features and random walks
+<p align="center">Figure: architecture with sparse authors, abstract features and random walks
 
-<img width="900" alt="image" src="https://github.com/ghassenabdedayem/Link-prediction/assets/56557440/00515438-4b51-4369-85ad-b0c6b2d471c7">
+<p align="center"><img width="900" alt="image" src="https://github.com/ghassenabdedayem/Link-prediction/assets/56557440/00515438-4b51-4369-85ad-b0c6b2d471c7"></p>
 
-Figure 4: architecture with TF-IDF with authors and walks features
+<p align="center">Figure: architecture with TF-IDF with authors and walks features
 
-<img width="500" alt="image" src="https://github.com/ghassenabdedayem/Link-prediction/assets/56557440/af426332-899a-4b19-a782-3e104d6a9775">
+<p align="center"><img width="500" alt="image" src="https://github.com/ghassenabdedayem/Link-prediction/assets/56557440/af426332-899a-4b19-a782-3e104d6a9775"></p>
 
-Figure 5: log loss over epoch
+<p align="center">Figure: log loss over epoch
 
 
 
