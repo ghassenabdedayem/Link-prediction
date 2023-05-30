@@ -87,7 +87,7 @@ We used the pretrained BERT model ‘bert-base-nli-mean-tokens’ which is more 
 <p align="center"><b>Figure 6:</b> message passing node features in graph</p><br>
 ### Description of the foreward steps
 The input tensors are first fed through fully connected layers (fc) and then the result is multiplied by the adjacency matrix using sparse matrix multiplication (spmm), which generates the hidden representation of the nodes (z1). The hidden representation is then passed through a ReLU activation function and a dropout layer. The same process is repeated for the second fully connected layer (fc2) to generate the final hidden representation of the nodes (z2). Then, the embedded features (z2) of the two nodes in each pair are multiplied to create a feature vector for each pair. This vector is passed through two additional fully connected layers (fc3 and fc4) with ReLU activation functions and a dropout layer. Finally, the output is passed through a final fully connected layer (fc5) with a log softmax activation function.<br>
-The below figures show a simplified representaion of the implemented architecture. The activation functions and the fully connected layers (fc) after each sparse matrix multiplication (mm) are ommitted from the figure.
+The below figures show a simplified representaion of the implemented architecture. The activation functions and the fully connected layers (fc) after each sparse matrix multiplication (mm) are ommitted from the figure.<br>
 
 <p align="center"><img width="900" alt="image" src="https://github.com/ghassenabdedayem/Link-prediction/assets/56557440/a80766fa-a085-4982-90b1-d8b989899ae2"></p>
 <p align="center"><b>Figure 7:</b> architecture with sparse authors, abstract features and random walks</p><br>
