@@ -4,7 +4,7 @@
  The aim of this project is to apply advanced Deep Learning techniques to solve a link prediction problem. The problem involves analyzing a graph network with over a hundred thousand nodes, representing scientific papers. The edges in the graph represent links between scientific papers, indicating if one paper cites another. In addition to the graph structure, we are given the abstracts and authors of each paper.
  
  <p align="center"><img width="320" alt="image" src="https://github.com/ghassenabdedayem/Link-prediction/assets/56557440/a320bce2-cd87-46c7-89d4-8d9d62e72086"></p>
- <p align="center"><b>Figure 1:</b> link prediction in graph</p><br>
+ <p align="center"><b>Figure 1:</b> link prediction problem</p><br>
  
  ## Data exploration
  The input files are :
