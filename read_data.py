@@ -74,3 +74,38 @@ def read_train_val_graph(path='https://www.lix.polytechnique.fr/~nikolentzos/fil
     
     
     return G, G_train, train_edges, val_edges, val_indices, y_val, nodes, node_to_idx
+
+
+
+def read_and_clean_abstracts (nodes, sample_length=-1, abstracts_path = 'https://www.lix.polytechnique.fr/~nikolentzos/files/aai/challenge/abstracts.txt'):
+    t = time()
+    abstracts = dict()
+    abstracts_list = list()
+    f = urlopen(abstracts_path)
+    
+    for i, line in tqdm(enumerate(f)):
+        if i == sample_length:
+            break
+        if i in nodes:
+            node, abstract = str(line).lower().split('|--|')
+            abstract = remove_stopwords(abstract)
+            #abstract = re.sub(r"[,.;@#?!&$()-]", " ", abstract)
+            abstract = re.sub(r"[^a-zA-Z0-9\s]", "", abstract)
+            #abstract = re.sub(r"\\", " ", abstract)
+            abstract = remove_stopwords(abstract)
+
+            for word in abstract.split()[:-1]:
+                #abstract = abstract.replace(word, stemmer.stem(word))
+                abstract = abstract.replace(word, lemmatizer.lemmatize(lemmatizer.lemmatize(lemmatizer.lemmatize(lemmatizer.lemmatize(lemmatizer.lemmatize(lemmatizer.lemmatize(word), pos='s'), pos='a'), pos='n'), pos='v'), pos='r'))
+            
+            node = re.sub("[^0-9]", "", node)
+            if i != int(node):
+                print('i and node not the same', i, node)
+            abstracts[int(node)] = abstract
+            abstracts_list.append(abstract)
+        
+    print('Text loaded and cleaned in {:.0f} min'.format((time()-t)/60))
+    return abstracts
+
+
+
