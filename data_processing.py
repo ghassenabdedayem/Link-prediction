@@ -1,5 +1,10 @@
 import numpy as np
 import scipy.sparse as sp
+from scipy.sparse import identity, diags
+import networkx as nx
+from time import time
+from gensim.models import Word2Vec
+
 
 def normalize_adjacency(A):
     n = A.shape[0]
