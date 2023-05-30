@@ -51,7 +51,6 @@ Authors are cleaned by removing spacial characters and removing accents from let
 ## Features engineering
 In this section we will explain the features engineering from the Graph, the Authors and the Abstracts. These precalculated features are then stored on Google Cloud Platform (GCP) and used directly by the model of next section.
 ### Training and validation split
-function: read_train_val_graph
 Using the function read_train_val_graph we load the graph and then we remove randomly some edges (10% of the edges of the graph) that will represent the validation set. The remaining edges are kept as the training set. This function also creates pairs (edges and negative edges) labels y and y_val with 1 to indicate that there is an edge between the pair of nodes and 0 if the pair of nodes is not connected.
 ### Graph adjacency matrix
 Then create and normalize an adjacency matrix from the graph using the functions create_adjacency and normalize_adjacency. The adjacency matrix is a fundamental representation of a graph that encodes the relationships between its nodes. It is particularly useful in the context of graph neural networks (GNNs) because it provides a concise and efficient way to store and manipulate the graph structure. However, the adjacency matrix can have varying degrees of sparsity, which can lead to numerical instability and poor performance when used directly in GNNs. To address this, we normalized the adjacency matrix.
