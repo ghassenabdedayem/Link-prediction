@@ -4,7 +4,7 @@
  The aim of this project is to apply advanced Deep Learning techniques to solve a link prediction problem. The problem involves analyzing a graph network with over a hundred thousand nodes, representing scientific papers. The edges in the graph represent links between scientific papers, indicating if one paper cites another. In addition to the graph structure, we are given the abstracts and authors of each paper.
  
  <p align="center"><img width="320" alt="image" src="https://github.com/ghassenabdedayem/Link-prediction/assets/56557440/a320bce2-cd87-46c7-89d4-8d9d62e72086"></p>
- <p align="center"><b>Figure 1:</b> link prediction in graph</p><br>
+ <p align="center"><b>Figure 1:</b> link prediction problem</p><br>
  
  ## Data exploration
  The input files are :
@@ -26,12 +26,12 @@
 ### Abstracts
 #### Before normalization:
 Characteristics of the abstracts before normalization:
-- Longest abstract: 1,462 words
-- Number of words: 345,570 words
-- Empty abstracts: 7,249
-- Long abstracts more than 128 words: 82,394
-- Very long abstracts more than 256 words: 4,171
-- Huge abstracts more than 512 words: 65
+- Longest abstract = 1,462 words
+- Number of words = 345,570 words
+- Empty abstracts = 7,249
+- Long abstracts more than 128 words = 82,394
+- Very long abstracts more than 256 words = 4,171
+- Huge abstracts more than 512 words = 65
 #### After normalization:
 We normalized the text by removing special characters and stop words and by applying Lemmatization using the WordNet lemmatizer (three times with different part-of-speech tags: the first time as a noun,
 the second as an adjective, the third as a verb). The output of the text cleaning of the abstracts has the below characteristics:
@@ -51,7 +51,6 @@ Authors are cleaned by removing spacial characters and removing accents from let
 ## Features engineering
 In this section we will explain the features engineering from the Graph, the Authors and the Abstracts. These precalculated features are then stored on Google Cloud Platform (GCP) and used directly by the model of next section.
 ### Training and validation split
-function: read_train_val_graph
 Using the function read_train_val_graph we load the graph and then we remove randomly some edges (10% of the edges of the graph) that will represent the validation set. The remaining edges are kept as the training set. This function also creates pairs (edges and negative edges) labels y and y_val with 1 to indicate that there is an edge between the pair of nodes and 0 if the pair of nodes is not connected.
 ### Graph adjacency matrix
 Then create and normalize an adjacency matrix from the graph using the functions create_adjacency and normalize_adjacency. The adjacency matrix is a fundamental representation of a graph that encodes the relationships between its nodes. It is particularly useful in the context of graph neural networks (GNNs) because it provides a concise and efficient way to store and manipulate the graph structure. However, the adjacency matrix can have varying degrees of sparsity, which can lead to numerical instability and poor performance when used directly in GNNs. To address this, we normalized the adjacency matrix.
@@ -84,10 +83,13 @@ We used the pretrained BERT model ‘bert-base-nli-mean-tokens’ which is more 
 ## Model
 
 <p align="center"><img width="600" alt="image" src="https://github.com/ghassenabdedayem/Link-prediction/assets/56557440/66545fa5-bb65-470a-9fd0-6cc2f8de0f71"></p>
-<p align="center"><b>Figure 6:</b> message passing node features in graph</p><br>
+<p align="center"><b>Figure 6:</b> node features after message passing in graph</p><br>
+
 ### Description of the foreward steps
+
 The input tensors are first fed through fully connected layers (fc) and then the result is multiplied by the adjacency matrix using sparse matrix multiplication (spmm), which generates the hidden representation of the nodes (z1). The hidden representation is then passed through a ReLU activation function and a dropout layer. The same process is repeated for the second fully connected layer (fc2) to generate the final hidden representation of the nodes (z2). Then, the embedded features (z2) of the two nodes in each pair are multiplied to create a feature vector for each pair. This vector is passed through two additional fully connected layers (fc3 and fc4) with ReLU activation functions and a dropout layer. Finally, the output is passed through a final fully connected layer (fc5) with a log softmax activation function.<br>
 The below figures show a simplified representaion of the implemented architecture. The activation functions and the fully connected layers (fc) after each sparse matrix multiplication (mm) are ommitted from the figure.
+<br>
 
 <p align="center"><img width="900" alt="image" src="https://github.com/ghassenabdedayem/Link-prediction/assets/56557440/a80766fa-a085-4982-90b1-d8b989899ae2"></p>
 <p align="center"><b>Figure 7:</b> architecture with sparse authors, abstract features and random walks</p><br>
