@@ -84,7 +84,7 @@ We used the pretrained BERT model ‘bert-base-nli-mean-tokens’ which is more 
 ## Model
 
 <p align="center"><img width="600" alt="image" src="https://github.com/ghassenabdedayem/Link-prediction/assets/56557440/66545fa5-bb65-470a-9fd0-6cc2f8de0f71"></p>
-<p align="center"><b>Figure 6:</b> message passing node features in graph</p><br>
+<p align="center"><b>Figure 6:</b> node features after message passing in graph</p><br>
 
 ### Description of the foreward steps
 
