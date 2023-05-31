@@ -46,24 +46,6 @@ def read_train_val_graph(path='https://www.lix.polytechnique.fr/~nikolentzos/fil
     print('Number of nodes:', n, 'number of edges:', m, 'in the Training set')
     print('len(nodes)', len(nodes))
 
-    y_val = [1]*len(val_edges)
-
-    n_val_edges = len(val_edges)
-    
-    # print('Creating random val_edges...')
-    # for i in range(n_val_edges):
-    #     n1 = nodes[randint(0, n-1)]
-    #     n2 = nodes[randint(0, n-1)]
-    #     (n1, n2) = (min(n1, n2), max(n1, n2))
-    #     while n2 >= n: #or (n1, n2) in train_edges:
-    #         if (n1, n2) in train_edges:
-    #             print((n1, n2), 'in train_edges:')
-    #         n1 = nodes[randint(0, n-1)]
-    #         n2 = nodes[randint(0, n-1)]
-    #         (n1, n2) = (min(n1, n2), max(n1, n2))
-    #     val_edges.append((n1, n2))
-
-    y_val.extend([0]*(n_val_edges))
     
     ### From Giannis /!\
     val_indices = np.zeros((2,len(val_edges)))
@@ -76,7 +58,7 @@ def read_train_val_graph(path='https://www.lix.polytechnique.fr/~nikolentzos/fil
     
     
     
-    return G, G_train, train_edges, val_edges, val_indices, y_val, nodes, node_to_idx
+    return G, G_train, train_edges, val_indices, nodes, node_to_idx
 
 
 
