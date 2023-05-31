@@ -8,6 +8,9 @@ import networkx as nx
 from random import choice
 from urllib.request import urlopen
 import requests
+from urllib.request import urlopen
+from unidecode import unidecode
+import re
 
 def read_train_val_graph(path='https://www.lix.polytechnique.fr/~nikolentzos/files/aai/challenge/edgelist.txt', val_ratio=0.1):
     # We gets the data from the file on the distant server
@@ -107,5 +110,15 @@ def read_and_clean_abstracts (nodes, sample_length=-1, abstracts_path = 'https:/
     print('Text loaded and cleaned in {:.0f} min'.format((time()-t)/60))
     return abstracts
 
+def text_to_list(text):
+    text = unidecode(text)
+    text = re.sub(r"[^a-zA-Z\s.,]", "", text)
+    return text.split(',')
 
+def read_and_clean_authors (path = 'https://www.lix.polytechnique.fr/~nikolentzos/files/aai/challenge/authors.txt'):
+    authors = pd.read_csv(urlopen('https://www.lix.polytechnique.fr/~nikolentzos/files/aai/challenge/authors.txt'), sep = '|', header=None)
+    authors = authors.rename(columns={0: "paper_id", 2: "authors"})
+    authors['authors'] = authors['authors'].apply(text_to_list)
+    authors = authors[["paper_id", "authors"]]
+    return authors
 
