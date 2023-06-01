@@ -110,6 +110,6 @@ Two approaches are tested in the training phases to simulate the negative edges 
 
 
 <p align="center"><img width="500" alt="image" src="https://github.com/ghassenabdedayem/Link-prediction/assets/56557440/5e7dc33e-3eb1-49c2-ac69-602b5bba07a2"></p>
-<p align="center"><b>Figure 11:</b> Random negative pairs picked randomly and dynamically during the training</p><br>
+<p align="center"><b>Figure 12:</b> Random negative pairs picked randomly and dynamically during the training</p><br>
 
 
