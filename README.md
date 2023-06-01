@@ -100,7 +100,7 @@ The below figures show a simplified representaion of the implemented architectur
 <p align="center"><img width="500" alt="image" src="https://github.com/ghassenabdedayem/Link-prediction/assets/56557440/af426332-899a-4b19-a782-3e104d6a9775"></p>
 <p align="center"><b>Figure 9:</b> Log loss over epoch</p><br>
  
-### Negative edges and unbalanced training
+### Unbalanced training and negative pairs
 Two approaches are tested in the training phases to simulate the negative edges (pairs that do not correspond to edges in the Graph). The graph is composed of 138,499 nodes, which correspond to a 9.59e9 possible pairs. The number of the edges is 1,091,955, so we have a ratio of 1 / 8,783 of positive edges over the possible pairs of nodes. To handle this particularity, we have two notebooks:
 - <b>main_GNN_model.ipynb:</b> the negative edges are fixed at the begining of the training in the training function "train_model".
 - <b>main_GNN_model-random_negative_indices.ipynb:</b> the negative edges are defined dynamically and randomly during the training in the function "train_model".
