@@ -11,6 +11,9 @@ import requests
 from urllib.request import urlopen
 from unidecode import unidecode
 import re
+from tqdm.notebook import tqdm
+from gensim.parsing.preprocessing import remove_stopwords
+from nltk.stem.wordnet import WordNetLemmatizer
 
 def read_train_val_graph(path='https://www.lix.polytechnique.fr/~nikolentzos/files/aai/challenge/edgelist.txt', val_ratio=0.1):
     # We gets the data from the file on the distant server
@@ -63,6 +66,7 @@ def read_train_val_graph(path='https://www.lix.polytechnique.fr/~nikolentzos/fil
 
 
 def read_and_clean_abstracts (nodes, sample_length=-1, abstracts_path = 'https://www.lix.polytechnique.fr/~nikolentzos/files/aai/challenge/abstracts.txt'):
+    # The sample_length variable is used to determine if we load only a subset of the data
     t = time()
     abstracts = dict()
     abstracts_list = list()
